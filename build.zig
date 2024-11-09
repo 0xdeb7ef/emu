@@ -50,17 +50,19 @@ pub fn build(b: *std.Build) !void {
     });
 
     const chip8_test_suite = b.dependency("chip8_test_suite", .{});
-    const chip8_tests_dir = chip8_test_suite.path("bin").getPath(b);
-    var chip8_tests = try std.fs.openDirAbsolute(chip8_tests_dir, .{ .iterate = true });
+    const chip8_tests_dir = chip8_test_suite.path("bin");
+    var chip8_tests = try std.fs.openDirAbsolute(chip8_tests_dir.getPath(b), .{ .iterate = true });
     defer chip8_tests.close();
-    var iter = chip8_tests.iterate();
 
+    var iter = chip8_tests.iterate();
     while (try iter.next()) |file| {
         if (std.mem.endsWith(u8, file.name, ".ch8")) {
-            const name = try std.fmt.allocPrint(b.allocator, "bin/{s}", .{file.name});
-            lib_unit_tests.root_module.addAnonymousImport(file.name, .{
-                .root_source_file = chip8_test_suite.path(name),
-            });
+            lib_unit_tests.root_module.addAnonymousImport(
+                file.name,
+                .{
+                    .root_source_file = chip8_tests_dir.path(b, file.name),
+                },
+            );
         }
     }
 
