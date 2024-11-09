@@ -127,7 +127,7 @@ pub const CPU = struct {
                 0x29 => Instruction{ .LD_F = @bitCast(inst) },
                 0x33 => Instruction{ .LD_B = @bitCast(inst) },
                 0x55 => Instruction{ .LD_wI = @bitCast(inst) },
-                0x64 => Instruction{ .LD_rI = @bitCast(inst) },
+                0x65 => Instruction{ .LD_rI = @bitCast(inst) },
                 else => Instruction{ .invalid = inst },
             },
             else => Instruction{ .invalid = inst },
@@ -220,7 +220,7 @@ pub const CPU = struct {
     // 7xkk - ADD Vx, byte
     /// Set Vx = Vx + kk
     fn ADD_Vx(self: *CPU, inst: Instruction) void {
-        self.register[inst.ADD_Vx.Vx] += inst.ADD_Vx.byte;
+        self.register[inst.ADD_Vx.Vx] +%= inst.ADD_Vx.byte;
     }
 
     // Annn - LD I, addr
