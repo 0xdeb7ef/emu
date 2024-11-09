@@ -18,7 +18,7 @@ pub const CPU = struct {
     // config
     old_shr: bool = false,
 
-    const PC_START = 0x200;
+    pub const PC_START = 0x200;
     const STACK_SIZE = 16;
 
     const WIDTH = 64;
@@ -78,9 +78,9 @@ pub const CPU = struct {
 
     pub fn decode(inst: u16) Instruction {
         return switch (inst & 0xF000) {
-            0x0000 => switch (inst) {
-                0x00E0 => Instruction{ .CLS = {} },
-                0x00EE => Instruction{ .RET = {} },
+            0x0000 => switch (inst & 0x0FFF) {
+                0x0E0 => Instruction{ .CLS = {} },
+                0x0EE => Instruction{ .RET = {} },
                 else => Instruction{ .SYS = {} },
             },
             0x1000 => Instruction{ .JP = @bitCast(inst) },
@@ -88,25 +88,25 @@ pub const CPU = struct {
             0x3000 => Instruction{ .SE_Vx = @bitCast(inst) },
             0x4000 => Instruction{ .SNE_Vx = @bitCast(inst) },
             0x5000 => switch (inst & 0x000F) {
-                0x0000 => Instruction{ .SE_Vx_Vy = @bitCast(inst) },
+                0x0 => Instruction{ .SE_Vx_Vy = @bitCast(inst) },
                 else => Instruction{ .invalid = inst },
             },
             0x6000 => Instruction{ .LD_Vx = @bitCast(inst) },
             0x7000 => Instruction{ .ADD_Vx = @bitCast(inst) },
             0x8000 => switch (inst & 0x000F) {
-                0x0000 => Instruction{ .LD_Vx_Vy = @bitCast(inst) },
-                0x0001 => Instruction{ .OR = @bitCast(inst) },
-                0x0002 => Instruction{ .AND = @bitCast(inst) },
-                0x0003 => Instruction{ .XOR = @bitCast(inst) },
-                0x0004 => Instruction{ .ADD_Vx_Vy = @bitCast(inst) },
-                0x0005 => Instruction{ .SUB = @bitCast(inst) },
-                0x0006 => Instruction{ .SHR = @bitCast(inst) },
-                0x0007 => Instruction{ .SUBN = @bitCast(inst) },
-                0x000E => Instruction{ .SHL = @bitCast(inst) },
+                0x0 => Instruction{ .LD_Vx_Vy = @bitCast(inst) },
+                0x1 => Instruction{ .OR = @bitCast(inst) },
+                0x2 => Instruction{ .AND = @bitCast(inst) },
+                0x3 => Instruction{ .XOR = @bitCast(inst) },
+                0x4 => Instruction{ .ADD_Vx_Vy = @bitCast(inst) },
+                0x5 => Instruction{ .SUB = @bitCast(inst) },
+                0x6 => Instruction{ .SHR = @bitCast(inst) },
+                0x7 => Instruction{ .SUBN = @bitCast(inst) },
+                0xE => Instruction{ .SHL = @bitCast(inst) },
                 else => Instruction{ .invalid = inst },
             },
             0x9000 => switch (inst & 0x000F) {
-                0x0000 => Instruction{ .SNE_Vx_Vy = @bitCast(inst) },
+                0x0 => Instruction{ .SNE_Vx_Vy = @bitCast(inst) },
                 else => Instruction{ .invalid = inst },
             },
             0xA000 => Instruction{ .LD_I = @bitCast(inst) },
@@ -114,20 +114,20 @@ pub const CPU = struct {
             0xC000 => Instruction{ .RND = @bitCast(inst) },
             0xD000 => Instruction{ .DRW = @bitCast(inst) },
             0xE000 => switch (inst & 0x00FF) {
-                0x009E => Instruction{ .SKP = @bitCast(inst) },
-                0x00A1 => Instruction{ .SKNP = @bitCast(inst) },
+                0x9E => Instruction{ .SKP = @bitCast(inst) },
+                0xA1 => Instruction{ .SKNP = @bitCast(inst) },
                 else => Instruction{ .invalid = inst },
             },
             0xF000 => switch (inst & 0x00FF) {
-                0x0007 => Instruction{ .LD_DT = @bitCast(inst) },
-                0x000A => Instruction{ .LD_K = @bitCast(inst) },
-                0x0015 => Instruction{ .LD_tDT = @bitCast(inst) },
-                0x0018 => Instruction{ .LD_tST = @bitCast(inst) },
-                0x001E => Instruction{ .ADD_I = @bitCast(inst) },
-                0x0029 => Instruction{ .LD_F = @bitCast(inst) },
-                0x0033 => Instruction{ .LD_B = @bitCast(inst) },
-                0x0055 => Instruction{ .LD_wI = @bitCast(inst) },
-                0x0064 => Instruction{ .LD_rI = @bitCast(inst) },
+                0x07 => Instruction{ .LD_DT = @bitCast(inst) },
+                0x0A => Instruction{ .LD_K = @bitCast(inst) },
+                0x15 => Instruction{ .LD_tDT = @bitCast(inst) },
+                0x18 => Instruction{ .LD_tST = @bitCast(inst) },
+                0x1E => Instruction{ .ADD_I = @bitCast(inst) },
+                0x29 => Instruction{ .LD_F = @bitCast(inst) },
+                0x33 => Instruction{ .LD_B = @bitCast(inst) },
+                0x55 => Instruction{ .LD_wI = @bitCast(inst) },
+                0x64 => Instruction{ .LD_rI = @bitCast(inst) },
                 else => Instruction{ .invalid = inst },
             },
             else => Instruction{ .invalid = inst },
@@ -135,11 +135,12 @@ pub const CPU = struct {
     }
 
     // using comptime, we avoid having to write out the switch statements
-    pub fn execute(self: *CPU, inst: Instruction) void {
+    pub fn execute(self: *CPU, inst: Instruction) !void {
         switch (inst) {
             .invalid => |i| {
-                std.debug.print("{x} is an invalid instruction.\n", .{i});
-                @panic("invalid instruction");
+                _ = i; // autofix
+                return error.Invalid;
+                // @panic("invalid instruction");
             },
             .SYS => {
                 // SYS is a noop, would be interesting to see if this can be extended
@@ -147,8 +148,8 @@ pub const CPU = struct {
             },
             inline else => |i, tag| {
                 if (!@hasDecl(@This(), @tagName(tag))) {
-                    std.debug.print("{s} is not implemented.\n", .{@tagName(tag)});
-                    @panic("instruction not implemented");
+                    // @panic("instruction not implemented");
+                    return error.Unimplemented;
                 }
 
                 const f = @field(@This(), @tagName(tag));
@@ -307,22 +308,24 @@ test "cpu fetch" {
     try std.testing.expectEqual(0xBEEF, c.fetch());
 }
 
-test "fetch decode exec" {
+test "ibm.ch8" {
+    const rom = @embedFile("ibm.ch8");
     var c = CPU.init();
-    const rom = @embedFile("../rom/ibm.ch8");
-    std.debug.print("Loading ibm.ch8 ROM...\n", .{});
-    c.load_mem(0x200, rom);
+
+    c.load_mem(CPU.PC_START, rom);
 
     for (0..25) |_| {
         const i = c.fetch();
         const ii = CPU.decode(i);
-        std.debug.print("Executing: {}\n", .{ii});
-        c.execute(ii);
+
+        std.debug.print("{}\n", .{ii});
+
+        try c.execute(ii);
     }
 
     for (c.display) |col| {
-        for (col) |b| {
-            std.debug.print("{s}", .{if (b == 1) "\u{2588}" else " "});
+        for (col) |d| {
+            std.debug.print("{s}", .{if (d == 1) "\u{2588}" else " "});
         }
         std.debug.print("\n", .{});
     }
