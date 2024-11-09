@@ -2,7 +2,12 @@
     .name = "emu",
     .version = "0.0.0",
     //.minimum_zig_version = "0.11.0",
-    .dependencies = .{},
+    .dependencies = .{
+        .chip8_test_suite = .{
+            .url = "git+https://github.com/Timendus/chip8-test-suite?ref=v4.2#cb24d5595384a80b49ddedae13bec4042b16d41d",
+            .hash = "1220b45356266223cccccc03b75f1d4b854d63b564ae60a79cb2654b1f8153078a82",
+        },
+    },
     .paths = .{
         "build.zig",
         "build.zig.zon",

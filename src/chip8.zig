@@ -314,13 +314,251 @@ test "ibm.ch8" {
 
     c.load_mem(CPU.PC_START, rom);
 
-    for (0..25) |_| {
+    var prev: u16 = undefined;
+    var run = true;
+    while (run) {
         const i = c.fetch();
         const ii = CPU.decode(i);
 
         std.debug.print("{}\n", .{ii});
 
         try c.execute(ii);
+
+        if (prev == i)
+            run = false;
+        prev = i;
+    }
+
+    for (c.display) |col| {
+        for (col) |d| {
+            std.debug.print("{s}", .{if (d == 1) "\u{2588}" else " "});
+        }
+        std.debug.print("\n", .{});
+    }
+}
+
+test "1-chip8-logo.ch8" {
+    const rom = @embedFile("1-chip8-logo.ch8");
+    var c = CPU.init();
+
+    c.load_mem(CPU.PC_START, rom);
+
+    var prev: u16 = undefined;
+    var run = true;
+    while (run) {
+        const i = c.fetch();
+        const ii = CPU.decode(i);
+
+        std.debug.print("{}\n", .{ii});
+
+        try c.execute(ii);
+
+        if (prev == i)
+            run = false;
+        prev = i;
+    }
+
+    for (c.display) |col| {
+        for (col) |d| {
+            std.debug.print("{s}", .{if (d == 1) "\u{2588}" else " "});
+        }
+        std.debug.print("\n", .{});
+    }
+}
+
+test "2-ibm-logo.ch8" {
+    const rom = @embedFile("2-ibm-logo.ch8");
+    var c = CPU.init();
+
+    c.load_mem(CPU.PC_START, rom);
+
+    var prev: u16 = undefined;
+    var run = true;
+    while (run) {
+        const i = c.fetch();
+        const ii = CPU.decode(i);
+
+        std.debug.print("{}\n", .{ii});
+
+        try c.execute(ii);
+
+        if (prev == i)
+            run = false;
+        prev = i;
+    }
+
+    for (c.display) |col| {
+        for (col) |d| {
+            std.debug.print("{s}", .{if (d == 1) "\u{2588}" else " "});
+        }
+        std.debug.print("\n", .{});
+    }
+}
+
+test "3-corax+.ch8" {
+    const rom = @embedFile("3-corax+.ch8");
+    var c = CPU.init();
+
+    c.load_mem(CPU.PC_START, rom);
+
+    var prev: u16 = undefined;
+    var run = true;
+    while (run) {
+        const i = c.fetch();
+        const ii = CPU.decode(i);
+
+        std.debug.print("{}\n", .{ii});
+
+        try c.execute(ii);
+
+        if (prev == i)
+            run = false;
+        prev = i;
+    }
+
+    for (c.display) |col| {
+        for (col) |d| {
+            std.debug.print("{s}", .{if (d == 1) "\u{2588}" else " "});
+        }
+        std.debug.print("\n", .{});
+    }
+}
+
+test "4-flags.ch8" {
+    const rom = @embedFile("4-flags.ch8");
+    var c = CPU.init();
+
+    c.load_mem(CPU.PC_START, rom);
+
+    var prev: u16 = undefined;
+    var run = true;
+    while (run) {
+        const i = c.fetch();
+        const ii = CPU.decode(i);
+
+        std.debug.print("{}\n", .{ii});
+
+        try c.execute(ii);
+
+        if (prev == i)
+            run = false;
+        prev = i;
+    }
+
+    for (c.display) |col| {
+        for (col) |d| {
+            std.debug.print("{s}", .{if (d == 1) "\u{2588}" else " "});
+        }
+        std.debug.print("\n", .{});
+    }
+}
+
+test "5-quirks.ch8" {
+    const rom = @embedFile("5-quirks.ch8");
+    var c = CPU.init();
+
+    c.load_mem(CPU.PC_START, rom);
+
+    var prev: u16 = undefined;
+    var run = true;
+    while (run) {
+        const i = c.fetch();
+        const ii = CPU.decode(i);
+
+        std.debug.print("{}\n", .{ii});
+
+        try c.execute(ii);
+
+        if (prev == i)
+            run = false;
+        prev = i;
+    }
+
+    for (c.display) |col| {
+        for (col) |d| {
+            std.debug.print("{s}", .{if (d == 1) "\u{2588}" else " "});
+        }
+        std.debug.print("\n", .{});
+    }
+}
+
+test "6-keypad.ch8" {
+    const rom = @embedFile("6-keypad.ch8");
+    var c = CPU.init();
+
+    c.load_mem(CPU.PC_START, rom);
+
+    var prev: u16 = undefined;
+    var run = true;
+    while (run) {
+        const i = c.fetch();
+        const ii = CPU.decode(i);
+
+        std.debug.print("{}\n", .{ii});
+
+        try c.execute(ii);
+
+        if (prev == i)
+            run = false;
+        prev = i;
+    }
+
+    for (c.display) |col| {
+        for (col) |d| {
+            std.debug.print("{s}", .{if (d == 1) "\u{2588}" else " "});
+        }
+        std.debug.print("\n", .{});
+    }
+}
+
+test "7-beep.ch8" {
+    const rom = @embedFile("7-beep.ch8");
+    var c = CPU.init();
+
+    c.load_mem(CPU.PC_START, rom);
+
+    var prev: u16 = undefined;
+    var run = true;
+    while (run) {
+        const i = c.fetch();
+        const ii = CPU.decode(i);
+
+        std.debug.print("{}\n", .{ii});
+
+        try c.execute(ii);
+
+        if (prev == i)
+            run = false;
+        prev = i;
+    }
+
+    for (c.display) |col| {
+        for (col) |d| {
+            std.debug.print("{s}", .{if (d == 1) "\u{2588}" else " "});
+        }
+        std.debug.print("\n", .{});
+    }
+}
+
+test "8-scrolling.ch8" {
+    const rom = @embedFile("8-scrolling.ch8");
+    var c = CPU.init();
+
+    c.load_mem(CPU.PC_START, rom);
+
+    var prev: u16 = undefined;
+    var run = true;
+    while (run) {
+        const i = c.fetch();
+        const ii = CPU.decode(i);
+
+        std.debug.print("{}\n", .{ii});
+
+        try c.execute(ii);
+
+        if (prev == i)
+            run = false;
+        prev = i;
     }
 
     for (c.display) |col| {
