@@ -579,7 +579,7 @@ test "1-chip8-logo.ch8" {
     if (false) return error.SkipZigTest;
     std.debug.print("1-chip-logo.ch8\n", .{});
 
-    const rom = @embedFile("1-chip8-logo.ch8");
+    const rom = @embedFile("1-chip8-logo.ch8:");
     var c = CPU.init();
 
     c.load_mem(CPU.PC_START, rom);
@@ -679,7 +679,7 @@ test "3-corax+.ch8" {
         }
     }
 
-    i = 23;
+    i = 3;
     while (i <= 11) : (i += 5) {
         var j: usize = 11;
         while (j <= 43) : (j += 16) {
