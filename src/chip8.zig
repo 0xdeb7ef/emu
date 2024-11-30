@@ -147,8 +147,7 @@ pub const CPU = struct {
     // using comptime, we avoid having to write out the switch statements
     pub fn execute(self: *CPU, inst: Instruction) !void {
         switch (inst) {
-            .invalid => |i| {
-                _ = i; // autofix
+            .invalid => {
                 return error.Invalid;
                 // @panic("invalid instruction");
             },
@@ -577,9 +576,9 @@ test "cpu fetch" {
 
 test "1-chip8-logo.ch8" {
     if (false) return error.SkipZigTest;
-    std.debug.print("1-chip-logo.ch8\n", .{});
+    std.debug.print("1-chip-logo.ch8:\n", .{});
 
-    const rom = @embedFile("1-chip8-logo.ch8:");
+    const rom = @embedFile("1-chip8-logo.ch8");
     var c = CPU.init();
 
     c.load_mem(CPU.PC_START, rom);
@@ -672,15 +671,15 @@ test "3-corax+.ch8" {
 
     // yes, we are checking the pixels to see if we passed the tests
     var i: usize = 3;
-    while (i <= 11) : (i += 5) {
+    while (i <= 18) : (i += 5) {
         var j: usize = 11;
         while (j < 64) : (j += 16) {
             try std.testing.expectEqual(1, c.display[i][j]);
         }
     }
 
-    i = 3;
-    while (i <= 11) : (i += 5) {
+    i = 23;
+    while (i <= 28) : (i += 5) {
         var j: usize = 11;
         while (j <= 43) : (j += 16) {
             try std.testing.expectEqual(1, c.display[i][j]);
@@ -714,28 +713,28 @@ test "4-flags.ch8" {
     }
 
     // yes, we are, once again, checking the display pixels
-    try std.testing.expect(check_pixels_flags(c, 2, 27, 3));
-    try std.testing.expect(check_pixels_flags(c, 2, 49, 3));
+    try std.testing.expect(checkPixelFlags(c, 2, 27, 3));
+    try std.testing.expect(checkPixelFlags(c, 2, 49, 3));
 
-    try std.testing.expect(check_pixels_flags(c, 7, 5, 3));
-    try std.testing.expect(check_pixels_flags(c, 7, 27, 4));
-    try std.testing.expect(check_pixels_flags(c, 7, 49, 4));
+    try std.testing.expect(checkPixelFlags(c, 7, 5, 3));
+    try std.testing.expect(checkPixelFlags(c, 7, 27, 4));
+    try std.testing.expect(checkPixelFlags(c, 7, 49, 4));
 
-    try std.testing.expect(check_pixels_flags(c, 12, 5, 3));
-    try std.testing.expect(check_pixels_flags(c, 12, 27, 4));
-    try std.testing.expect(check_pixels_flags(c, 12, 49, 3));
+    try std.testing.expect(checkPixelFlags(c, 12, 5, 3));
+    try std.testing.expect(checkPixelFlags(c, 12, 27, 4));
+    try std.testing.expect(checkPixelFlags(c, 12, 49, 3));
 
-    try std.testing.expect(check_pixels_flags(c, 18, 27, 4));
-    try std.testing.expect(check_pixels_flags(c, 18, 49, 4));
+    try std.testing.expect(checkPixelFlags(c, 18, 27, 4));
+    try std.testing.expect(checkPixelFlags(c, 18, 49, 4));
 
-    try std.testing.expect(check_pixels_flags(c, 23, 5, 3));
-    try std.testing.expect(check_pixels_flags(c, 23, 27, 4));
-    try std.testing.expect(check_pixels_flags(c, 23, 49, 3));
+    try std.testing.expect(checkPixelFlags(c, 23, 5, 3));
+    try std.testing.expect(checkPixelFlags(c, 23, 27, 4));
+    try std.testing.expect(checkPixelFlags(c, 23, 49, 3));
 
-    try std.testing.expect(check_pixels_flags(c, 29, 31, 2));
+    try std.testing.expect(checkPixelFlags(c, 29, 31, 2));
 }
 
-fn check_pixels_flags(cpu: CPU, row: usize, col: usize, n: usize) bool {
+fn checkPixelFlags(cpu: CPU, row: usize, col: usize, n: usize) bool {
     var i: usize = 0;
     while (i < n) : (i += 1) {
         if (cpu.display[row][col + (i * 4)] == 0)
